@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace SK
 {
-   public class PlayerLocomotion : MonoBehaviour
+    public class PlayerLocomotion : MonoBehaviour
     {
     // Start is called before the first frame update
    
         Transform cameraObject;
-        InputHandler InputHandler;
+        InputHandler inputHandler;
         Vector3 moveDirection;
 
         [HideInInspector]
@@ -23,16 +23,31 @@ namespace SK
         float movementSpeed = 5;
         [SerializeField]
         float rotationSpeed = 5;
-    }
+
 
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
         inputHandler = GetComponent<InputHandler>();
         cameraObject = Camera.main.transform;
-        myTransform = transfrom;
+        myTransform = transform;
     }
-    //movement region
+    public void Update()
+    {
+        float delta = Time.deltaTime;
+        inputHandler.TickInput(delta);
+        moveDirection = cameraObject.forward * inputHandler.vertical;
+        moveDirection += cameraObject.right * inputHandler.horizontal;
+        moveDirection.Normalize();
+
+        float speed = movementSpeed;
+        moveDirection *= speed;
+
+        Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection,normalVector);
+        rigidbody.velocity = projectedVelocity;
+    }
+
+    //Movement
     #region Movement
     Vector3 normalVector;
     Vector3 targetPostition;
@@ -43,8 +58,8 @@ namespace SK
         Vector3 targetDir = Vector3.zero;
         float moveOverride = inputHandler.moveAmount;
 
-        targetDir = cameraObject.forward = inputHandler.vertical;
-        targetDir += cameraObject.right = inputHandler.horizontal;
+        targetDir = cameraObject.forward * inputHandler.vertical;
+        targetDir += cameraObject.right * inputHandler.horizontal;
 
         //normalize the target direction
         targetDir.Normalize();
@@ -52,7 +67,7 @@ namespace SK
         targetDir.y = 0;
 
         if(targetDir == Vector3.zero)
-            targetDir = myTransform.forward
+            targetDir = myTransform.forward;
 
         //rotation speed
         float rs = rotationSpeed;
@@ -65,6 +80,7 @@ namespace SK
     }
 
     #endregion
+    }
 } 
 
 
