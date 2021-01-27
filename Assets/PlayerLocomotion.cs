@@ -2,17 +2,69 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerLocomotion : MonoBehaviour
+namespace SK
 {
-    // Start is called before the first frame update
-    void Start()
+   public class PlayerLocomotion : MonoBehaviour
     {
-        
+    // Start is called before the first frame update
+   
+        Transform cameraObject;
+        InputHandler InputHandler;
+        Vector3 moveDirection;
+
+        [HideInInspector]
+        public Transform myTransform;
+
+        public new Rigidbody rigidbody;
+        public GameObject normalCamera;
+
+        [Header("Stats")]
+        [SerializeField]
+        float movementSpeed = 5;
+        [SerializeField]
+        float rotationSpeed = 5;
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
-        
+        rigidbody = GetComponent<Rigidbody>();
+        inputHandler = GetComponent<InputHandler>();
+        cameraObject = Camera.main.transform;
+        myTransform = transfrom;
     }
-}
+    //movement region
+    #region Movement
+    Vector3 normalVector;
+    Vector3 targetPostition;
+
+    private void HandleRotation(float delta)
+    {
+        //set 3d vector
+        Vector3 targetDir = Vector3.zero;
+        float moveOverride = inputHandler.moveAmount;
+
+        targetDir = cameraObject.forward = inputHandler.vertical;
+        targetDir += cameraObject.right = inputHandler.horizontal;
+
+        //normalize the target direction
+        targetDir.Normalize();
+        //no movement on y
+        targetDir.y = 0;
+
+        if(targetDir == Vector3.zero)
+            targetDir = myTransform.forward
+
+        //rotation speed
+        float rs = rotationSpeed;
+        //target rotation // 3 dimensional physical rotation 
+        Quaternion tr = Quaternion.LookRotation(targetDir);
+        Quaternion targetRotation = Quaternion.Slerp(myTransform.rotation, tr, rs * delta);
+
+        myTransform.rotation = targetRotation;
+
+    }
+
+    #endregion
+} 
+
+
