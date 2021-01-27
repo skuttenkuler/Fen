@@ -25,7 +25,7 @@ namespace SK
         [SerializeField]
         float movementSpeed = 5;
         [SerializeField]
-        float rotationSpeed = 5;
+        float rotationSpeed = 10;
 
 
     void Start()
@@ -44,7 +44,8 @@ namespace SK
         moveDirection = cameraObject.forward * inputHandler.vertical;
         moveDirection += cameraObject.right * inputHandler.horizontal;
         moveDirection.Normalize();
-
+        moveDirection.y = 0;
+        
         float speed = movementSpeed;
         moveDirection *= speed;
 
